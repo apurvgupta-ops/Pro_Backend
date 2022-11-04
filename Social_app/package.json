@@ -1,0 +1,19 @@
+{
+  "name": "social_app",
+  "version": "1.0.0",
+  "description": "A basic social app",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "Apurv Gupta",
+  "license": "ISC",
+  "dependencies": {
+    "date-format": "^4.0.14",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
