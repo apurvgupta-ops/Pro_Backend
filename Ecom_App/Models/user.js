@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, " Please enter a password"],
       minlength: [5, "Please Enter your password more than 5 characters"],
-      select: false, // this same as password == undefined it means password is not showing in the results
+      // select: false, // this same as password == undefined it means password is not showing in the results
     },
     role: {
       type: String,
@@ -33,11 +33,11 @@ const userSchema = new mongoose.Schema(
     photo: {
       id: {
         type: String,
-        required: true,
+        // required: true,
       },
       secure_url: {
         type: String,
-        required: true,
+        // required: true,
       },
     },
     forgetPasswordToken: {
@@ -82,7 +82,7 @@ userSchema.methods.getForgetPasswordToken = async function () {
     .update(forgetToken)
     .digest("hex");
 
-    return forgetToken
+  return forgetToken;
 };
 
 module.exports = mongoose.model("User", userSchema);
