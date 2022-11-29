@@ -1,8 +1,14 @@
 const express = require("express");
 const app = express();
+const userRoute = require("./Routes/user");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+//Middlewares
+app.use(express.json());
+app.use(cors());
+app.use(cookieParser());
 
-app.use("/", (req, res) => {
-  res.send("Api running");
-});
+//Routes
+app.use("/api/v1", userRoute);
 
 module.exports = app;
