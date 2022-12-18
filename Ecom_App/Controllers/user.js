@@ -5,14 +5,15 @@ const cloudinary = require("cloudinary");
 
 exports.signup = BigPromise(async (req, res, next) => {
   let result;
-  if (req.files) {
-    const files = req.files.photo;
-    result = await cloudinary.v2.uploader.upload(files, {
-      folder: "usersImage",
-      width: 150,
-      crop: "scale",
-    });
+  if (!req.files) {
+    return next(new Error("Please provide the photo"));
   }
+  const files = req.files.photo;
+  result = await cloudinary.v2.uploader.upload(files.tempFilePath, {
+    folder: "usersImage",
+    width: 150,
+    crop: "scale",
+  });
 
   const { name, email, password } = req.body;
   if (!(email || password || name)) {
