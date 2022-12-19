@@ -31,4 +31,33 @@ exports.signup = BigPromise(async (req, res, next) => {
   CookieToken(user, res);
 });
 
-// module.exports = signup
+exports.login = BigPromise(async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return next(new Error("Email and password is required"));
+  }
+
+  const user = await User.findOne({ email }).select("+password");
+  if (!user) {
+    return next(new Error("Email not found"));
+  }
+
+  const isPasswordCorrect = await user.isPasswordMatch(password);
+  if (!isPasswordCorrect) {
+    return next(new Error("Incorrect Crendentials"));
+  }
+
+  CookieToken(user, res);
+});
+
+exports.logout = BigPromise(async (req, res, next) => {
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Logout successfully",
+  });
+});

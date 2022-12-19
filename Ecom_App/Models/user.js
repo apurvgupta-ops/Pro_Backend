@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, " Please enter a password"],
       minlength: [5, "Please Enter your password more than 5 characters"],
-      // select: false, // this same as password == undefined it means password is not showing in the results
+      select: false, // this same as password == undefined it means password is not showing in the results
     },
     role: {
       type: String,
