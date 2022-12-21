@@ -131,3 +131,29 @@ exports.resetPassword = BigPromise(async (req, res, next) => {
 
   CookieToken(user, res);
 });
+
+exports.getLoggedInUserDetails = BigPromise(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+exports.updatePassword = BigPromise(async (req, res, next) => {
+  const userId = req.user.id;
+
+  const user = await User.findById(userId).select("+password");
+  const isPasswordCorrect = await user.isPasswordMatch(
+    req.body.currentPassword
+  );
+
+  if (!isPasswordCorrect) {
+    return next(new Error("Current password is not matched in the db"));
+  }
+
+  user.password = req.body.newPassword;
+
+  await user.save();
+  CookieToken(user, res);
+});
