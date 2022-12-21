@@ -2,6 +2,8 @@ const User = require("../Models/user");
 const BigPromise = require("../Middlewares/BigPromise");
 const CookieToken = require("../Utils/cookieToken");
 const cloudinary = require("cloudinary");
+const MailHelper = require("../Utils/MailHelper");
+const crypto = require("crypto");
 
 exports.signup = BigPromise(async (req, res, next) => {
   let result;
@@ -60,4 +62,72 @@ exports.logout = BigPromise(async (req, res, next) => {
     success: true,
     message: "Logout successfully",
   });
+});
+
+exports.forgotPassword = BigPromise(async (req, res, next) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new Error("Email not found in the DB"));
+  }
+
+  const forgotPassword = await user.getForgetPasswordToken();
+  await user.save({ validateBeforeSave: false });
+
+  const myUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/password/reset/${forgotPassword}`;
+
+  const message = "Copy paste this link to forgot the password";
+
+  try {
+    await MailHelper({
+      email: user.email,
+      subject: "Ecom - password reset token",
+      message: myUrl,
+    });
+
+    res.status(200).json({
+      success: true,
+      message,
+    });
+  } catch (error) {
+    user.forgetPasswordToken = undefined;
+    user.forgetPasswordExpiry = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(new Error("forgot password not working"));
+  }
+});
+
+exports.resetPassword = BigPromise(async (req, res, next) => {
+  const token = req.params.token;
+  // console.log(token);
+  const encryptedToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  console.log(encryptedToken);
+  const user = await User.findOne({
+    encryptedToken,
+    forgetPasswordExpiry: { $gt: Date.now() },
+  });
+  console.log(user);
+
+  if (!user) {
+    return next(new Error("No user found"));
+  }
+
+  if (req.body.password !== req.body.confirmPassword) {
+    return next(new Error("Password not match"));
+  }
+
+  user.password = req.body.password;
+
+  user.forgetPasswordToken = undefined;
+  user.forgetPasswordExpiry = undefined;
+
+  await user.save();
+
+  CookieToken(user, res);
 });

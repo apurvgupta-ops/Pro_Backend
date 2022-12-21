@@ -33,11 +33,11 @@ const userSchema = new mongoose.Schema(
     photo: {
       id: {
         type: String,
-        required: true,
+        // required: true,
       },
       secure_url: {
         type: String,
-        required: true,
+        // required: true,
       },
     },
     forgetPasswordToken: {
@@ -73,7 +73,7 @@ userSchema.methods.getJwtToken = function () {
 };
 
 //Random strings for forget Password
-userSchema.methods.getForgetPasswordToken = async function () {
+userSchema.methods.getForgetPasswordToken = function () {
   const forgetToken = crypto.randomBytes(20).toString("hex");
 
   //creating hash so that we can store in the database
@@ -81,6 +81,8 @@ userSchema.methods.getForgetPasswordToken = async function () {
     .createHash("sha256")
     .update(forgetToken)
     .digest("hex");
+
+  this.forgetPasswordExpiry = Date.now() + 20 * 60 * 1000;
 
   return forgetToken;
 };

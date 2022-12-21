@@ -17,7 +17,7 @@ const MailHelper = async (options) => {
     // html: "<b>Hello world?</b>", // html body
   };
   // send mail with defined transport object
-  let info = await transporter.sendMail(message);
+  await transporter.sendMail(message);
 };
 
 module.exports = MailHelper;
