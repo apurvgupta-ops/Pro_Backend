@@ -197,7 +197,59 @@ exports.updateProfile = BigPromise(async (req, res, next) => {
 
 exports.getAllUsers = BigPromise(async (req, res, next) => {
   const users = await User.find();
+  res.status(200).json({
+    success: true,
+    users,
+  });
+});
 
+exports.getAUser = BigPromise(async (req, res, next) => {
+  const id = req.params.userId;
+  console.log(id);
+  const user = await User.findById(id);
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
+});
+
+exports.updateAUser = BigPromise(async (req, res, next) => {
+  const id = req.params.userId;
+
+  const newData = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+  };
+
+  const user = await User.findByIdAndUpdate(id, newData, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Profile updation complete",
+  });
+});
+
+exports.deleteAUser = BigPromise(async (req, res, next) => {
+  const user = await User.findById(req.params.userId);
+  if (!user) {
+    return next(new Error("User not found"));
+  }
+  const imageId = user.photo.id;
+  const deleteImage = await cloudinary.v2.uploader.destroy(imageId);
+  user.remove();
+  res.status(200).json({
+    success: true,
+    message: "Deletion Done",
+  });
+});
+
+exports.managerGetAllUsers = BigPromise(async (req, res, next) => {
+  const users = await User.find({ role: "user" });
   res.status(200).json({
     success: true,
     users,
