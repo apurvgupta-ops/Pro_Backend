@@ -34,7 +34,7 @@ const productSchema = mongoose.Schema({
       "Please Select the category from short-sleeves, Long-sleeves, sweat-shirts and hoodies",
     ],
     enum: {
-      values: ["Short-Sleeves", "Long-Sleeves", "Sweat-Shirt", "hoodies"],
+      values: ["ShortSleeves", "LongSleeves", "SweatS hirt", "hoodies"],
       message:
         "Please Select the category from short-sleeves, Long-sleeves, sweat-shirts and hoodies",
     },
