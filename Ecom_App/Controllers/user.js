@@ -191,6 +191,7 @@ exports.updateProfile = BigPromise(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+    user,
     message: "Profile updation complete",
   });
 });
