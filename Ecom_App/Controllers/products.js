@@ -7,9 +7,8 @@ exports.addProduct = BigPromise(async (req, res, next) => {
   if (!req.files) {
     return next(new Error("Images are requried"));
   }
-
   if (req.files) {
-    for (let index = 0; index < req.files.photos; index++) {
+    for (let index = 0; index < req.files.photos.length; index++) {
       let result = await cloudinary.v2.uploader.upload(
         req.files.photos[index].tempFilePath,
         { folder: "products" }
