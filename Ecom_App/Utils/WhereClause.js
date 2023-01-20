@@ -12,12 +12,22 @@ class WhereClause {
           name: {
             //Both given by mongodb
             $regex: this.bigQ.search,
-            $options: "i", // i for case sensitive and 'g' is more global
+            $options: "i", // i for case insensitive and 'g' is more global
           },
         }
       : {};
 
-    this.base = this.base.find(searchWord);
+    this.base = this.base.find(...searchWord);
+    return this;
+  }
+
+  pager(resultPerPage) {
+    let currentPage = 1;
+    if (this.bigQ.page) {
+      currentPage = this.bigQ.page;
+    }
+    const skipValues = resultPerPage * (currentPage - 1);
+    this.base = this.base.limit(resultPerPage).skip(skipValues);
     return this;
   }
 }
