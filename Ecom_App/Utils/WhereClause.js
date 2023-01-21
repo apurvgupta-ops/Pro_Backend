@@ -21,6 +21,23 @@ class WhereClause {
     return this;
   }
 
+  //Aggrigation
+  filter() {
+    let copyQ = { ...this.bigQ };
+
+    delete copyQ("search");
+    delete copyQ("page");
+    delete copyQ("limit");
+
+    //convert copyQ into string
+    let stringCopyQ = JSON.stringify(copyQ);
+    stringCopyQ = stringCopyQ.replace("/\b(gte|lte|gte)\b/g", (m) => `$${m}`);
+
+    const jsonCopyQ = JSON.parse(stringCopyQ);
+    this.base = this.base.find(jsonCopyQ);
+    return this;
+  }
+
   pager(resultPerPage) {
     let currentPage = 1;
     if (this.bigQ.page) {
