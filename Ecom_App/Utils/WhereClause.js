@@ -1,5 +1,9 @@
 // The WHERE clause is used to filter records. It is used to extract only those records that fulfill a specified condition.
 
+//base : product.find({email})
+
+//bigQ :  search=coder&page=2&category=anything&rating[gte]=4&price[lte]=999&price[gte]=199
+
 class WhereClause {
   constructor(base, bigQ) {
     this.base = base;
@@ -17,7 +21,7 @@ class WhereClause {
         }
       : {};
 
-    this.base = this.base.find(...searchWord);
+    this.base = this.base.find({ ...searchWord });
     return this;
   }
 
@@ -25,13 +29,13 @@ class WhereClause {
   filter() {
     let copyQ = { ...this.bigQ };
 
-    delete copyQ("search");
-    delete copyQ("page");
-    delete copyQ("limit");
+    delete copyQ["search"];
+    delete copyQ["page"];
+    delete copyQ["limit"];
 
     //convert copyQ into string
     let stringCopyQ = JSON.stringify(copyQ);
-    stringCopyQ = stringCopyQ.replace("/\b(gte|lte|gte)\b/g", (m) => `$${m}`);
+    stringCopyQ = stringCopyQ.replace(/\b(gte|lte|gte)\b/g, (m) => `$${m}`);
 
     const jsonCopyQ = JSON.parse(stringCopyQ);
     this.base = this.base.find(jsonCopyQ);
@@ -49,6 +53,4 @@ class WhereClause {
   }
 }
 
-//base : product.find(email)
-
-//bigq :  search=coder&page=2&category=anything&rating[gte]=4&price[lte]=999&price[gte]=199
+module.exports = WhereClause;

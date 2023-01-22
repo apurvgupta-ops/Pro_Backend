@@ -1,6 +1,7 @@
 const cloudinary = require("cloudinary");
 const Product = require("../Models/products");
 const BigPromise = require("../Middlewares/BigPromise");
+const WhereClause = require("../Utils/WhereClause.js");
 
 exports.addProduct = BigPromise(async (req, res, next) => {
   let imageArray = [];
@@ -27,5 +28,32 @@ exports.addProduct = BigPromise(async (req, res, next) => {
   res.status(200).json({
     success: true,
     product,
+  });
+});
+
+exports.getAllProducts = BigPromise(async (req, res, next) => {
+  const resultPerPage = 6;
+
+  const totalProducts = await Product.countDocuments();
+
+  //Where Clause return an Object
+  const productsObj = new WhereClause(Product.find(), req.query)
+    .search()
+    .filter();
+
+  let products = await productsObj.base;
+
+  productsObj.pager(resultPerPage);
+
+  //if we dont use clone then it show an error "query is aleady executed" and this error when we put await in productsObj.base without await query is running perfect
+  products = await productsObj.base.clone();
+
+  const filteredProducts = await products.length;
+
+  res.status(200).json({
+    success: true,
+    products,
+    totalProducts,
+    filteredProducts,
   });
 });
