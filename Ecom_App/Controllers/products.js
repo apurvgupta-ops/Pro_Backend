@@ -31,6 +31,25 @@ exports.addProduct = BigPromise(async (req, res, next) => {
   });
 });
 
+exports.adminGetAllProducts = BigPromise(async (req, res, next) => {
+  const products = await Product.find();
+  res.status(200).json({
+    success: true,
+    products,
+  });
+});
+
+exports.getAProduct = BigPromise(async (req, res, next) => {
+  const product = await Product.findById(req.params.productId);
+  if (!product) {
+    return next(new Error("Product is not found"));
+  }
+  res.status(200).json({
+    success: true,
+    product,
+  });
+});
+
 exports.getAllProducts = BigPromise(async (req, res, next) => {
   const resultPerPage = 6;
 
