@@ -31,14 +31,6 @@ exports.addProduct = BigPromise(async (req, res, next) => {
   });
 });
 
-exports.adminGetAllProducts = BigPromise(async (req, res, next) => {
-  const products = await Product.find();
-  res.status(200).json({
-    success: true,
-    products,
-  });
-});
-
 exports.getAProduct = BigPromise(async (req, res, next) => {
   const product = await Product.findById(req.params.productId);
   if (!product) {
@@ -77,25 +69,38 @@ exports.getAllProducts = BigPromise(async (req, res, next) => {
   });
 });
 
+exports.adminGetAllProducts = BigPromise(async (req, res, next) => {
+  const products = await Product.find();
+  res.status(200).json({
+    success: true,
+    products,
+  });
+});
+
 exports.adminUpdateAProduct = BigPromise(async (req, res, next) => {
   const product = await Product.findById(req.params.productId);
-
-  let imagesArray = [];
   // For images
+  let imagesArray = [];
+
   if (!product) {
     return next(new Error("Product is not found"));
   }
-  //For destroy the image
-  if (req.files) {
-    for (let index = 0; index < product.photos.length; index++) {
-      const res = cloudinary.v2.uploader.destroy(product.photo[index].id);
-    }
+  if (!req.files) {
+    return next(new Error("Photos not found"));
   }
-
-  //upload the new image;
   if (req.files) {
-    for (let index = 0; index < req.body.photos.length; index++) {
-      const result = await cloudinary.v2.uploader.upload(
+    //For destroy the image
+    for (let index = 0; index < product.photos.length; index++) {
+      console.log(product.photos[index].id);
+      const res = await cloudinary.v2.uploader.destroy(
+        product.photos[index].id
+      );
+      // console.log("result-----------", res);
+    }
+
+    //upload the new image;
+    for (let index = 0; index < req.files.photos.length; index++) {
+      let result = await cloudinary.v2.uploader.upload(
         req.files.photos[index].tempFilePath,
         { folder: "products" }
       );
@@ -106,6 +111,7 @@ exports.adminUpdateAProduct = BigPromise(async (req, res, next) => {
     }
   }
 
+  console.log(imagesArray);
   req.body.photos = imagesArray;
 
   product = await Product.findByIdAndUpdate(req.params.productId, req.body, {
@@ -116,5 +122,22 @@ exports.adminUpdateAProduct = BigPromise(async (req, res, next) => {
   res.status(200).json({
     success: true,
     product,
+  });
+});
+
+exports.adminDeleteAProduct = BigPromise(async (req, res, next) => {
+  const product = await Product.findById(req.params.productId);
+
+  //For multiple deletion
+  for (let index = 0; index < product.photos.length; index++) {
+    const imageid = product.photos[index].id;
+    await cloudinary.v2.uploader.destroy(imageid);
+  }
+
+  await product.remove();
+
+  res.status(200).json({
+    success: true,
+    message: "Deletion Successful",
   });
 });
