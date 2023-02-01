@@ -179,3 +179,35 @@ exports.addReview = BigPromise(async (req, res, next) => {
     success: true,
   });
 });
+
+exports.deleteReviews = BigPromise(async (req, res, next) => {
+  const { productId } = req.query;
+
+  const product = await Product.findById(productId);
+
+  const review = await Product.reviews.filter(
+    (rev) => rev.user.toString() === req.user._id.toString()
+  );
+
+  const noOfReviews = review.length;
+  product.ratings =
+    product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+    product.review.length;
+
+  await Product.findByIdAndUpdate(
+    productId,
+    { review, noOfReviews, ratings },
+    { new: true, useFindAndModify: false, runValidators: true }
+  );
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
+exports.getReviewForOneProduct = BigPromise(async (req, res, next) => {
+  const { productId } = req.query;
+  const product = await Product.findById(productId);
+  const review = product.review;
+  res.status(200).json({ success: true, review });
+});
