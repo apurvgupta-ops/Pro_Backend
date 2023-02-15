@@ -77,7 +77,7 @@ exports.adminGetAllProducts = BigPromise(async (req, res, next) => {
   });
 });
 
-// TODO: CHECKING THE BUG DESTROY IMAGE IS NOT WORKING
+// TODO: CHECKING THE BUG : DESTROY IMAGE IS NOT WORKING
 exports.adminUpdateAProduct = BigPromise(async (req, res, next) => {
   const product = await Product.findById(req.params.productId);
   // For images
