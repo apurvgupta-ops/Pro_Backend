@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const productSchema =new mongoose.Schema({
+const productSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Please enter the product name"],
@@ -38,6 +38,10 @@ const productSchema =new mongoose.Schema({
       message:
         "Please Select the category from short-sleeves, Long-sleeves, sweat-shirts and hoodies",
     },
+  },
+  stock: {
+    type: Number,
+    required: [true, "Please add stocks"],
   },
   brand: {
     type: String,
