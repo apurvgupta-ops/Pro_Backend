@@ -24,10 +24,15 @@ app.use(
 
 app.use(morgan("tiny"));
 
+app.set("view engine", "ejs");
+
 //Routes
 app.use("/api/v1", userRoute);
 app.use("/api/v1", productRoute);
 app.use("/api/v1", paymentRoute);
 app.use("/api/v1", orderRoute);
+app.get("/api/v1/auth", (req, res) => {
+  res.render("home");
+});
 
 module.exports = app;

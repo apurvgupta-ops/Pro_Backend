@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev" : "nodemon index.js"
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -14,13 +14,17 @@
     "bcrypt": "^5.1.0",
     "cloudinary": "^1.32.0",
     "cookie-parser": "^1.4.6",
+    "cookie-session": "^2.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.7.3",
     "morgan": "^1.10.0",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
     "swagger-ui-express": "^4.6.0",
     "validator": "^13.7.0",
     "yamljs": "^0.3.0"
